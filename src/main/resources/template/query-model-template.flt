@@ -1,0 +1,21 @@
+package ${packageName};
+
+import lombok.Builder;
+import lombok.Getter;
+
+
+/**
+ * the ${tableName} Query model.
+ *
+ * @author ${author}
+ * @since ${createTime}
+ */
+@Getter
+@Builder
+public class ${tableName}Query {
+
+<#list fields as field>
+  private ${field.type} ${field.name};
+</#list>
+
+}

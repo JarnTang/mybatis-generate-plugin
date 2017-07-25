@@ -1,0 +1,64 @@
+package ${packageName};
+
+
+import ${daoClassFullPackage};
+import ${modelClassFullPackage};
+import ${queryClassFullPackage};
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+/**
+ * the ${tableName} repository.
+ *
+ * @author ${author}
+ * @since ${createTime}
+ */
+@Repository
+public class ${className} {
+
+  @Autowired
+  private ${daoClassName} ${daoVariable};
+
+  /**
+   * 批量插入记录.
+   *
+   * @param entities 待插入的业务实体列表
+   * @return 业务实体对象列表
+   */
+  public int batchInsert(List<${tableName}> entities){
+    return ${daoVariable}.batchInsert(entities);
+  }
+
+  /**
+   * 查询满足条件的总记录数.
+   *
+   * @param whereEntity 查询条件
+   * @return 满足条件的总记录数
+   */
+  public long count(${tableName}Query whereEntity){
+    return ${daoVariable}.count(whereEntity);
+  }
+
+  /**
+   * 根据条件进行单条记录查询.
+   *
+   * @param whereEntity 查询条件
+   * @return 业务实体${tableName}对象
+   */
+  public ${tableName} findOne(${tableName}Query whereEntity){
+    return ${daoVariable}.findOne(whereEntity);
+  }
+
+  /**
+   * 新插入记录.
+   *
+   * @param entity 待插入的业务实体
+   * @return 业务实体对象
+   */
+  public int insert(${tableName} entity){
+    return ${daoVariable}.insert(entity);
+  }
+
+}

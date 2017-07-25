@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${daoClassPackage}">
+
+  <resultMap id="${resultMapName}" type="${resultMapType}">
+<#list fields as field>
+  <#if field=="id">
+      ${r'<id column="id" property="id"/>'}
+  <#else>
+      <result column="${field}" property="${field}"/>
+  </#if>
+</#list>
+  </resultMap>
+
+  <sql id="fields">
+      ${fields?join(", ")}
+  </sql>
+
+  <select id="count" parameterType="${resultMapType}"
+          resultType="java.lang.Long">
+      SELECT count(1) FROM ${tableName}
+      <where>
+      <#list fields as field>
+          <if test="${field} != null">AND ${field} = ${r"#{"}${field}}</if>
+      </#list>
+      </where>
+      limit 1
+  </select>
+
+  <insert id="insert" keyProperty="id" useGeneratedKeys="true"
+          parameterType="${resultMapType}">
+      INSERT INTO
+      ${tableName}
+      <trim prefix="(" suffix=")" suffixOverrides=",">
+      <#list fields as field>
+          <#if field=="created"||field=="updated">
+              ${field},
+          <#else >
+              <if test="${field} != null">${field},</if>
+          </#if>
+      </#list>
+      </trim>
+      VALUES
+      <trim prefix="(" suffix=")" suffixOverrides=",">
+      <#list fields as field>
+      <#if field=="created"||field=="updated">
+          unix_timestamp(),
+      <#else >
+          <if test="${field} != null">${r"#{"}${field}},</if>
+      </#if>
+      </#list>
+      </trim>
+  </insert>
+
+  <select id="findList" parameterType="${resultMapType}"
+          resultMap="${resultMapName}">
+      SELECT
+      <include refid="fields"/>
+      FROM ${tableName}
+      <where>
+      <#list fields as field>
+          <if test="${field} != null">AND ${field} = ${r"#{"}${field}}</if>
+      </#list>
+      </where>
+      limit 5000
+  </select>
+
+  <select id="findOne" parameterType="${resultMapType}"
+          resultMap="${resultMapName}">
+      SELECT
+      <include refid="fields"/>
+      FROM ${tableName}
+      <where>
+      <#list fields as field>
+          <if test="${field} != null">AND ${field} = ${r"#{"}${field}}</if>
+      </#list>
+      </where>
+      limit 1
+  </select>
+
+  <select id="findPage" parameterType="${resultMapType}"
+          resultMap="${resultMapName}">
+      SELECT
+      <include refid="fields"/>
+      FROM ${tableName}
+      <where>
+      <#list fields as field>
+          <if test="query.${field} != null">AND ${field} = ${r"#{query."}${field}}</if>
+      </#list>
+      </where>
+      ${r"limit #{pager.start},#{pager.size}"}
+  </select>
+
+  <select id="batchFindById" parameterType="${resultMapType}"
+          resultMap="${resultMapName}">
+      SELECT
+      <include refid="fields"/>
+      FROM ${tableName} WHERE
+      id IN
+      <foreach collection="list" item="id" open="(" close=")" separator=",">
+      ${r"#{id}"}
+      </foreach>
+      limit 5000
+  </select>
+
+  <select id="findListWithIn" parameterType="${resultMapType}"
+          resultMap="${resultMapName}">
+      SELECT
+      <include refid="fields"/>
+      FROM ${tableName}
+      <where>
+      <#list fields as field>
+          <if test="query.${field} != null">AND ${field} = ${r"#{query."}${field}}</if>
+      </#list>
+          <if test="inValues != null">
+              AND ${r"${inFiled}"} in
+              <foreach collection="inValues" item="value" open="(" close=")" separator=",">
+              ${r"#{value}"}
+              </foreach>
+          </if>
+      </where>
+      limit 5000
+  </select>
+
+  <insert id="batchInsert" useGeneratedKeys="true" parameterType="${resultMapType}">
+      INSERT INTO ${tableName}
+      <trim prefix="(" suffix=")" suffixOverrides=",">
+      <#list fields as field>
+          <#if field!="id">
+          ${field},
+          </#if>
+      </#list>
+      </trim>
+      VALUES
+      <foreach collection="list" item="item" index="index" separator=",">
+      <trim prefix="(" suffix=")" suffixOverrides=",">
+      <#list fields as field>
+          <#if field=="id">
+          <#elseif field=="created"||field=="updated">
+              unix_timestamp(),
+          <#else >
+              ${r"#{item."}${field}},
+          </#if>
+      </#list>
+      </trim>
+      </foreach>
+  </insert>
+
+  <update id="updateBySelective" parameterType="${resultMapType}">
+      UPDATE ${tableName}
+      <set>
+      <#list fields as field>
+      <#if field == "created">
+      <#elseif field=="updated">
+          updated = UNIX_TIMESTAMP(),
+      <#else >
+          <if test="entity.${field} != null">${field} = ${r"#{entity."}${field}},</if>
+      </#if>
+      </#list>
+      </set>
+      <where>
+      <#list fields as field>
+          <if test="criteria.${field} != null">AND ${field} = ${r"#{criteria."}${field}}</if>
+      </#list>
+      </where>
+      limit 100
+  </update>
+
+</mapper>
