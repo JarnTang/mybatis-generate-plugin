@@ -1,11 +1,15 @@
 package com.jarntang.genertor.core.gen.xml;
 
-import com.jarntang.genertor.core.model.ClassInfo;
-import com.jarntang.genertor.core.model.ClassInfo.FieldInfo;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.jarntang.genertor.core.model.TableInfo;
+import com.jarntang.genertor.util.StringUtils;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.jarntang.genertor.util.StringUtils.camelCaseName;
 
 /**
  * mybatis mapper generator.
@@ -25,13 +29,17 @@ public class MapperGenerator extends AbstractMapperFileGenerator {
   }
 
   @Override
-  public Object buildData(ClassInfo classInfo, String basePackageName, String tableName) {
+  public Object buildData(TableInfo tableInfo, String basePackageName) {
+    String tableName = tableInfo.getName();
+    String className = StringUtils.underLineToUpperName(tableName);
     return MapperModel.builder()
         .tableName(tableName)
-        .resultMapName(tableName + "Map")
-        .resultMapType(entityClassFullPackage(basePackageName, tableName))
-        .daoClassPackage(daoClassFullPackage(basePackageName, tableName))
-        .fields(classInfo.getFields().stream().map(FieldInfo::getName).collect(Collectors.toList()))
+        .resultMapName(className + "Map")
+        .resultMapType(entityClassFullPackage(basePackageName, className))
+        .daoClassPackage(daoClassFullPackage(basePackageName, className))
+        .fields(tableInfo.getColumns().stream().map(c -> new MapField(c.getName(), camelCaseName(c.getName())))
+                .collect(Collectors.toList()))
+            .fieldNames(tableInfo.getColumns().stream().map(TableInfo.ColumnInfo::getName).collect(Collectors.toList()))
         .build();
   }
 
@@ -40,11 +48,20 @@ public class MapperGenerator extends AbstractMapperFileGenerator {
   public static class MapperModel {
 
     private String tableName;
-    private List<String> fields;
+    private List<MapField> fields;
     private String resultMapName;
+    private List<String> fieldNames;
     private String resultMapType;
     private String daoClassPackage;
 
+  }
+
+  @Data
+  @AllArgsConstructor
+  public static class MapField{
+
+    String dbColumn;
+    String javaField;
   }
 
 }

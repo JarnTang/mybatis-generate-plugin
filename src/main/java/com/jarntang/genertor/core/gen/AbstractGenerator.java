@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.jarntang.genertor.util.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -34,29 +36,10 @@ public abstract class AbstractGenerator extends PakcageNameGenerator implements 
 
   public abstract String getFilePath(Context context, String tableName, String basePackageName);
 
-  public abstract Object buildData(ClassInfo classInfo, String basePackageName, String tableName);
 
-  /**
-   * 生成代码.
-   *
-   * @param context 上下文信息
-   * @return 模板代码
-   */
-  public CodeInfo generate(Context context, TableInfo tableInfo) {
-    String fileName = getTemplateFileName();
-    ClassInfo classInfo = buildJavaClass(context, tableInfo);
-    Object data = buildData(classInfo, context.getBasePackage(), tableInfo.getName());
-    String code = FreemarkerUtils.rendering(fileName, data);
-
-    String javaPath = getFilePath(context, tableInfo.getName(), context.getBasePackage());
-
-    return new CodeInfo(code, javaPath);
-  }
-
-
-  ClassInfo buildJavaClass(Context context, TableInfo tableInfo) {
+  protected ClassInfo buildJavaClass(Context context, TableInfo tableInfo) {
     ClassInfo classInfo = new ClassInfo();
-    classInfo.setClassName(tableInfo.getName());
+    classInfo.setClassName(StringUtils.underLineToUpperName(tableInfo.getName()));
     classInfo.setComment(tableInfo.getComment());
     classInfo.setAuthor(System.getProperty("user.name"));
     classInfo.setCreateTime(new SimpleDateFormat("yyyy/MM/dd HH:ss").format(new java.util.Date()));
@@ -71,7 +54,8 @@ public abstract class AbstractGenerator extends PakcageNameGenerator implements 
       for (ColumnInfo column : columns) {
         Class type = sqlType2JavaType(column.getType());
         fields
-            .add(new FieldInfo(column.getName(), type.getSimpleName(), type, column.getComment()));
+            .add(new FieldInfo(StringUtils.camelCaseName(column.getName()), type.getSimpleName(),
+                    type, column.getComment()));
       }
     }
 

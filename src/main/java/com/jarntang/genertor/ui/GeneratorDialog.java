@@ -107,10 +107,10 @@ public class GeneratorDialog extends JDialog implements GenerateView {
       setInputTextBorderRedColor(userNameTextField);
       return false;
     }
-    if (StringUtils.isEmpty(passwordTextField.getText())) {
-      setInputTextBorderRedColor(passwordTextField);
-      return false;
-    }
+//    if (StringUtils.isEmpty(passwordTextField.getText())) {
+//      setInputTextBorderRedColor(passwordTextField);
+//      return false;
+//    }
     if (!StringUtils.isNumeric(portTextField.getText())) {
       setInputTextBorderRedColor(portTextField);
       return false;

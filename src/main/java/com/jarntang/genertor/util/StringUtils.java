@@ -10,9 +10,22 @@ import com.intellij.codeInsight.template.macro.ConvertToCamelCaseMacro;
  */
 public class StringUtils {
 
-  public static String camelCaseName(String string) {
-    ConvertToCamelCaseMacro convert = new ConvertToCamelCaseMacro();
-    return convert.convertString(string).toString();
-  }
+    public static String camelCaseName(String string) {
+        if (string == null) {
+            return null;
+        }
+        ConvertToCamelCaseMacro convert = new ConvertToCamelCaseMacro();
+        return convert.convertString(string).toString();
+    }
+
+    public static String underLineToUpperName(String string) {
+        String str = camelCaseName(string);
+        if (str == null || "".equals(str.trim())) {
+            return str;
+        }
+        char[] chars = str.toCharArray();
+        chars[0] = Character.toUpperCase(chars[0]);
+        return new String(chars);
+    }
 
 }

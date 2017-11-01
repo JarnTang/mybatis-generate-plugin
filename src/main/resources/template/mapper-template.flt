@@ -9,13 +9,13 @@
   <#if field=="id">
       ${r'<id column="id" property="id"/>'}
   <#else>
-      <result column="${field}" property="${field}"/>
+      <result column="${field.dbColumn}" property="${field.javaField}"/>
   </#if>
 </#list>
   </resultMap>
 
   <sql id="fields">
-      ${fields?join(", ")}
+      ${fieldNames?join(", ")}
   </sql>
 
   <select id="count" parameterType="${resultMapType}"
@@ -23,7 +23,7 @@
       SELECT count(1) FROM ${tableName}
       <where>
       <#list fields as field>
-          <if test="${field} != null">AND ${field} = ${r"#{"}${field}}</if>
+          <if test="${field.javaField} != null">AND ${field.dbColumn} = ${r"#{"}${field.javaField}}</if>
       </#list>
       </where>
       limit 1
@@ -35,20 +35,20 @@
       ${tableName}
       <trim prefix="(" suffix=")" suffixOverrides=",">
       <#list fields as field>
-          <#if field=="created"||field=="updated">
-              ${field},
+          <#if field.dbColumn=="created"||field.dbColumn=="updated">
+           ${field.dbColumn},
           <#else >
-              <if test="${field} != null">${field},</if>
+          <if test="${field.javaField} != null">${field.dbColumn},</if>
           </#if>
       </#list>
       </trim>
       VALUES
       <trim prefix="(" suffix=")" suffixOverrides=",">
       <#list fields as field>
-      <#if field=="created"||field=="updated">
+      <#if field.dbColumn=="created"||field.dbColumn=="updated">
           unix_timestamp(),
       <#else >
-          <if test="${field} != null">${r"#{"}${field}},</if>
+          <if test="${field.javaField} != null">${r"#{"}${field.javaField}},</if>
       </#if>
       </#list>
       </trim>
@@ -61,7 +61,7 @@
       FROM ${tableName}
       <where>
       <#list fields as field>
-          <if test="${field} != null">AND ${field} = ${r"#{"}${field}}</if>
+          <if test="${field.javaField} != null">AND ${field.dbColumn} = ${r"#{"}${field.javaField}}</if>
       </#list>
       </where>
       limit 5000
@@ -74,7 +74,7 @@
       FROM ${tableName}
       <where>
       <#list fields as field>
-          <if test="${field} != null">AND ${field} = ${r"#{"}${field}}</if>
+          <if test="${field.javaField} != null">AND ${field.dbColumn} = ${r"#{"}${field.javaField}}</if>
       </#list>
       </where>
       limit 1
@@ -87,7 +87,7 @@
       FROM ${tableName}
       <where>
       <#list fields as field>
-          <if test="query.${field} != null">AND ${field} = ${r"#{query."}${field}}</if>
+          <if test="query.${field.javaField} != null">AND ${field.dbColumn} = ${r"#{query."}${field.javaField}}</if>
       </#list>
       </where>
       ${r"limit #{pager.start},#{pager.size}"}
@@ -112,7 +112,7 @@
       FROM ${tableName}
       <where>
       <#list fields as field>
-          <if test="query.${field} != null">AND ${field} = ${r"#{query."}${field}}</if>
+          <if test="query.${field.javaField} != null">AND ${field.dbColumn} = ${r"#{query."}${field.javaField}}</if>
       </#list>
           <if test="inValues != null">
               AND ${r"${inFiled}"} in
@@ -128,8 +128,8 @@
       INSERT INTO ${tableName}
       <trim prefix="(" suffix=")" suffixOverrides=",">
       <#list fields as field>
-          <#if field!="id">
-          ${field},
+          <#if field.dbColumn!="id">
+          ${field.dbColumn},
           </#if>
       </#list>
       </trim>
@@ -137,11 +137,11 @@
       <foreach collection="list" item="item" index="index" separator=",">
       <trim prefix="(" suffix=")" suffixOverrides=",">
       <#list fields as field>
-          <#if field=="id">
-          <#elseif field=="created"||field=="updated">
-              unix_timestamp(),
+          <#if field.dbColumn=="id">
+          <#elseif field.dbColumn=="created"||field.dbColumn=="updated">
+          unix_timestamp(),
           <#else >
-              ${r"#{item."}${field}},
+          ${r"#{item."}${field.javaField}},
           </#if>
       </#list>
       </trim>
@@ -152,17 +152,17 @@
       UPDATE ${tableName}
       <set>
       <#list fields as field>
-      <#if field == "created">
-      <#elseif field=="updated">
+      <#if field.dbColumn == "created">
+      <#elseif field.dbColumn=="updated">
           updated = UNIX_TIMESTAMP(),
       <#else >
-          <if test="entity.${field} != null">${field} = ${r"#{entity."}${field}},</if>
+          <if test="entity.${field.javaField} != null">${field.dbColumn} = ${r"#{entity."}${field.javaField}},</if>
       </#if>
       </#list>
       </set>
       <where>
       <#list fields as field>
-          <if test="criteria.${field} != null">AND ${field} = ${r"#{criteria."}${field}}</if>
+          <if test="criteria.${field.javaField} != null">AND ${field.dbColumn} = ${r"#{criteria."}${field.javaField}}</if>
       </#list>
       </where>
       limit 100

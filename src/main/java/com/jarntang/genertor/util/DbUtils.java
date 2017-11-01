@@ -3,15 +3,12 @@ package com.jarntang.genertor.util;
 
 import com.jarntang.genertor.core.model.TableInfo;
 import com.jarntang.genertor.core.model.TableInfo.ColumnInfo;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.JDBCType;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * database util
@@ -43,6 +40,7 @@ public class DbUtils {
 
         TableInfo table = new TableInfo();
         String tableName = tablesSet.getString("TABLE_NAME");
+
         String comment = tablesSet.getString("REMARKS");
         ResultSet columnsSet = metaData.getColumns(null, null, tableName, "%");
 
@@ -53,9 +51,7 @@ public class DbUtils {
           String dataType = columnsSet.getString("DATA_TYPE");
           String columnComment = columnsSet.getString("REMARKS");
           String columnName = columnsSet.getString("COLUMN_NAME");
-          ColumnInfo column = new ColumnInfo(columnName,
-              JDBCType.valueOf(Integer.parseInt(dataType)),
-              columnComment);
+          ColumnInfo column = new ColumnInfo(columnName, JDBCType.valueOf(Integer.parseInt(dataType)), columnComment);
           table.addColumn(column);
         }
         tables.add(table);
