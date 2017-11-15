@@ -1,6 +1,5 @@
 package ${packageName};
 
-
 import ${daoClassFullPackage};
 import ${modelClassFullPackage};
 import ${queryClassFullPackage};

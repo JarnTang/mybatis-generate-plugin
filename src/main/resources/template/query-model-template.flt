@@ -3,7 +3,6 @@ package ${packageName};
 import lombok.Builder;
 import lombok.Getter;
 
-
 /**
  * the ${tableName} Query model.
  *

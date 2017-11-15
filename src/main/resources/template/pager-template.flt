@@ -10,7 +10,6 @@ public class Pager {
 
   private int size;
   private int index;
-  private int start = 0;
 
   public Pager(int size, int index) {
     this.size = size;
@@ -35,7 +34,7 @@ public class Pager {
 
   public int getStart() {
     int startIndex = (this.index - 1) * size;
-    return startIndex > 0 ? startIndex : start;
+    return startIndex > 0 ? startIndex : 0;
   }
 
 }

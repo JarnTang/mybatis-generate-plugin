@@ -1,6 +1,5 @@
 package ${packageName};
 
-
 import ${entityPackage};
 import ${queryEntityPackage};
 import ${pagerEntityPackage};
