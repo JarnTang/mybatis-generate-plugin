@@ -1,25 +1,3 @@
-group 'com.jarntang.generator'
-version '1.0'
-
-apply plugin: 'org.jetbrains.intellij'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
-intellij.updateSinceUntilBuild false
-
-
-dependencies {
-    compile 'org.freemarker:freemarker:2.3.23'
-    compile 'mysql:mysql-connector-java:5.1.39'
-    compileOnly 'org.projectlombok:lombok:1.16.18'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-
-
 buildscript {
     repositories {
 
@@ -35,7 +13,40 @@ buildscript {
     }
 
     dependencies {
-        classpath "gradle.plugin.org.jetbrains:gradle-intellij-plugin:0.1.10"
+        classpath "gradle.plugin.org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.2.17"
     }
 }
 
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.11'
+}
+
+apply plugin: 'org.jetbrains.intellij'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+intellij{
+    updateSinceUntilBuild false
+    localPath '/Applications/IntelliJ IDEA.app/Contents'
+}
+
+lombok {
+    version = "1.16.4"
+    sha256 = "3ca225ce3917eac8bf4b7d2186845df4e70dcdede356dca8537b6d78a535c91e"
+}
+
+dependencies {
+    compile 'org.freemarker:freemarker:2.3.23'
+    compile 'mysql:mysql-connector-java:5.1.39'
+    compileOnly 'org.projectlombok:lombok:1.16.4'
+//    apt "org.projectlombok:lombok:1.16.18"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+
+group 'com.jarntang.generator'
+version '1.0'

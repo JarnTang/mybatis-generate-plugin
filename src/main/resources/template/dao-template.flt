@@ -91,6 +91,6 @@ public interface ${daoClassName} {
    * @param entity 待插入的业务实体
    * @return 业务实体对象
    */
-  public int insert(${entityName} entity);
+  public long insert(${entityName} entity);
 
 }
