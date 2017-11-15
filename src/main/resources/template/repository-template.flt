@@ -57,7 +57,7 @@ public class ${className} {
    * @param entity 待插入的业务实体
    * @return 业务实体对象
    */
-  public int insert(${tableName} entity){
+  public long insert(${tableName} entity){
     return ${daoVariable}.insert(entity);
   }
 
